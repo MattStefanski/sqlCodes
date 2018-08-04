@@ -1,0 +1,23 @@
+
+USE MS;
+
+CREATE TABLE STATS(
+STAT_ID INT(11)  PRIMARY KEY AUTO_INCREMENT,
+STAT_DATE DATETIME NOT NULL,
+STAT VARCHAR(20) NOT NULL,
+VALUE INT(11) NOT NULL
+);
+
+
+CREATE VIEW bestsellers_Count AS
+  SELECT sum(BESTSELER) as bestseller from BOOKS;
+
+
+CREATE EVENT job_update_bestsellers
+  ON SCHEDULE EVERY 1 MINUTE
+  DO CALL UpdateBestsellers();
+
+
+CREATE EVENT job_update_stats
+  ON SCHEDULE EVERY 1 MINUTE
+  DO  INSERT INTO STATS(STAT_DATE,STAT,VALUE) VALUES (sysdate(),'Bestsellers',(select bestseller from bestsellers_count));
